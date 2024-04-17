@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IoT Control Panel</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>IoT Control Panel</h1>
+
+    <div class="controls">
+        <h2>Slider Control</h2>
+        <input type="range" id="slider" min="0" max="100" step="1" value="0">
+        <p id="slider-value">Slider Value: <span id="slider-value-span">0</span></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slider = document.getElementById('slider');
+            const sliderValueSpan = document.getElementById('slider-value-span');
+
+            // Event listener for the slider input
+            slider.addEventListener('input', () => {
+                const sliderValue = slider.value;
+                sliderValueSpan.innerText = sliderValue; // Update the displayed value
+            });
+
+            // Event listener for the slider change (when the user releases the slider)
+            slider.addEventListener('change', () => {
+                const sliderValue = slider.value;
+                fetch('/api/slider-value', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `sliderValue=${sliderValue}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Handle the response from Flask if necessary
+                })
+                .catch(error => console.error(error));
+            });
+        });
+    </script>
+</body>
+</html>
