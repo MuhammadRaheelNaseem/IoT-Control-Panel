@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IoT Control Panel</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <!-- Add the Chart.js library for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>IoT Control Panel</h1>
+
+    <div class="controls">
+        <h2>LED Control</h2>
+        <button id="led-on" onclick="toggleLED('on')">LED ON</button>
+        <button id="led-off" onclick="toggleLED('off')">LED OFF</button>
+    </div>
+
+    <div class="controls">
+        <h2>Relay Control</h2>
+        <button id="relay-on" onclick="toggleRelay('on')">Relay ON</button>
+        <button id="relay-off" onclick="toggleRelay('off')">Relay OFF</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Function to make API calls to control LED
+        function toggleLED(state) {
+            fetch('/api/led-' + state, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // Add code to update UI components based on the API response
+                    // For example, you can update the gauge value or the graph data
+                })
+                .catch(error => console.error(error));
+        }
+
+        // Function to make API calls to control Relay
+        function toggleRelay(state) {
+            fetch('/api/relay-' + state, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // Add code to update UI components based on the API response
+                    // For example, you can update the gauge value or the graph data
+                })
+                .catch(error => console.error(error));
+        }
+
+    </script>
+</body>
+</html>
