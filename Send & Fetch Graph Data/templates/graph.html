@@ -1,0 +1,83 @@
+<html>
+<head>
+    <title>IoT Control Panel</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+</head>
+<body>
+    <h1>IoT Control Panel</h1>
+
+    <div class="chart-container">
+        <canvas id="iot-chart"></canvas>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let iotChart; // Declare the iotChart variable outside the updateGraph function
+
+        // Function to make API call to fetch graph data
+        function getGraphData() {
+            fetch('/api/get-graph-data')
+                .then(response => response.json())
+                .then(data => {
+                    updateGraph(data.labels, data.temperatures, data.humidity);
+                })
+                .catch(error => console.error(error));
+        }
+
+        // Function to update the graph with new data
+        function updateGraph(labels, temperatures, humidity) {
+            if (!iotChart) {
+                const ctx = document.getElementById('iot-chart').getContext('2d');
+                iotChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Temperature (°C)',
+                            data: temperatures,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 2,
+                            fill: false
+                        },
+                        {
+                            label: 'Humidity (%)',
+                            data: humidity,
+                            borderColor: 'rgba(192, 75, 75, 1)',
+                            borderWidth: 2,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                position: 'bottom'
+                            },
+                            y: {
+                                suggestedMin: 0,
+                                suggestedMax: 50
+                            }
+                        }
+                    }
+                });
+            } else {
+                iotChart.data.labels = labels;
+                iotChart.data.datasets[0].data = temperatures;
+                iotChart.data.datasets[1].data = humidity;
+                iotChart.update();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fetch initial graph data from the server
+            getGraphData();
+
+            // Fetch graph data every 1 second and update the chart
+            setInterval(getGraphData, 1000);
+        });
+    </script>
+</body>
+</html>
