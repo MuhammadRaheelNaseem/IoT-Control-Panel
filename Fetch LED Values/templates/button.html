@@ -1,0 +1,46 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>IoT Control Panel</title>
+    <!-- Add the Chart.js library for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <h1>IoT Control Panel</h1>
+
+    <div class="controls">
+        <h2>LED Control</h2>
+        <button id="led-on" onclick="toggleLED(1)">LED ON</button>
+        <button id="led-off" onclick="toggleLED(0)">LED OFF</button>
+        <p id="led-state">LED State: <span id="led-state-span">0</span></p>
+        <!-- Add a paragraph to display the LED state -->
+    </div>
+
+
+    <script>
+        function toggleLED(state) {
+            const apiRoute = state === 1 ? '/api/led-on' : '/api/led-off'; // Dynamically generate the API route
+            fetch(apiRoute, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ledState: state })  // Sending the state as JSON
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // Update the LED state on the HTML page based on the server response
+                    const ledStateSpan = document.getElementById('led-state-span');
+                    ledStateSpan.innerText = data.value;  // Use 'value' from the server response
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+    </script>
+</body>
+
+</html>
